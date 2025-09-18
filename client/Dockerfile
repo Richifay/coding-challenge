@@ -13,7 +13,9 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build the app
+# Build the app with environment variable
+ARG VITE_API_URL=https://coding-challenge-server-qa7d7w5fka-ew.a.run.app
+ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
 # Production stage with nginx
