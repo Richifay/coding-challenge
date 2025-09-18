@@ -51,13 +51,13 @@ gcloud auth configure-docker $REGION-docker.pkg.dev
 # Build and push server
 echo -e "${GREEN}🏗️  Building and pushing server image${NC}"
 cd server
-gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/coding-challenge-repo/$SERVICE_NAME_SERVER:latest -f Dockerfile.cloudrun .
+gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/coding-challenge-repo/$SERVICE_NAME_SERVER:latest .
 cd ..
 
 # Build and push client
 echo -e "${GREEN}🏗️  Building and pushing client image${NC}"
 cd client
-gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/coding-challenge-repo/$SERVICE_NAME_CLIENT:latest -f Dockerfile.cloudrun .
+gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/coding-challenge-repo/$SERVICE_NAME_CLIENT:latest .
 cd ..
 
 # Deploy server to Cloud Run
