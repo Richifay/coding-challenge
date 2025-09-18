@@ -90,12 +90,17 @@ gcloud run deploy $SERVICE_NAME_CLIENT \
     --memory 256Mi \
     --cpu 1 \
     --max-instances 5 \
-    --set-env-vars="VITE_API_URL=$SERVER_URL" \
     --timeout 300
 
 # Get client URL
 CLIENT_URL=$(gcloud run services describe $SERVICE_NAME_CLIENT --region=$REGION --format='value(status.url)')
 echo -e "${GREEN}✅ Client deployed at: ${CLIENT_URL}${NC}"
+
+# Update server with correct CLIENT_ORIGIN
+echo -e "${GREEN}🔧 Updating server CORS configuration${NC}"
+gcloud run services update $SERVICE_NAME_SERVER \
+    --region=$REGION \
+    --set-env-vars="MONGODB_URI=$MONGODB_URI,CLIENT_ORIGIN=$CLIENT_URL"
 
 echo -e "${GREEN}🎉 Deployment Complete!${NC}"
 echo -e "${YELLOW}📋 Next Steps:${NC}"
