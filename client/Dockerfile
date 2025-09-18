@@ -25,8 +25,12 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Copy nginx configuration (works for both local and Cloud Run)
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Copy startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 # Use PORT environment variable (Cloud Run uses 8080, local uses 80)
 EXPOSE $PORT
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start nginx with environment variable substitution
+CMD ["/start.sh"]
