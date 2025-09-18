@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE_URL } from "../config/api.js";
 import { formatMs } from "../utils/formatMs";
 
 export default function Leaderboard() {
   const [rows, setRows] = useState([]);
 
   async function load() {
-    const res = await fetch("http://localhost:4000/api/leaderboard");
+    const res = await fetch(`${API_BASE_URL}/api/leaderboard`);
     const data = await res.json();
     setRows(data);
   }

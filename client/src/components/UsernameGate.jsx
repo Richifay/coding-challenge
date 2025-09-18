@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE_URL } from "../config/api.js";
 
 export default function UsernameGate({ onStart }) {
   const [username, setUsername] = useState("");
@@ -23,7 +24,7 @@ export default function UsernameGate({ onStart }) {
     } catch {}
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/api/start", {
+      const res = await fetch(`${API_BASE_URL}/api/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: u }),

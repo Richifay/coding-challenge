@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
+import { API_BASE_URL } from "../config/api.js";
 
 export default function Challenge({ sessionId, onSolved }) {
   const [meta, setMeta] = useState(null);
@@ -9,7 +10,7 @@ export default function Challenge({ sessionId, onSolved }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/challenge").then(r => r.json()).then((c) => {
+    fetch(`${API_BASE_URL}/api/challenge`).then(r => r.json()).then((c) => {
       setMeta(c);
       const key = `code:${c.id || "default"}`;
       const saved = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
@@ -29,7 +30,7 @@ export default function Challenge({ sessionId, onSolved }) {
   async function run() {
     setRunning(true); setError(null); setOutput("");
     try {
-      const res = await fetch("http://localhost:4000/api/run", {
+      const res = await fetch(`${API_BASE_URL}/api/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
@@ -50,7 +51,7 @@ export default function Challenge({ sessionId, onSolved }) {
     if (!sessionId) return setError("You must start with a username.");
     setRunning(true); setError(null);
     try {
-      const res = await fetch("http://localhost:4000/api/submit", {
+      const res = await fetch(`${API_BASE_URL}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId, code }),

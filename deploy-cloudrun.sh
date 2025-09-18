@@ -10,6 +10,7 @@ PROJECT_ID="your-project-id"  # Replace with your GCP project ID
 REGION="us-central1"          # Replace with your preferred region
 SERVICE_NAME_SERVER="coding-challenge-server"
 SERVICE_NAME_CLIENT="coding-challenge-client"
+MONGODB_URI="mongodb+srv://sichardsayaz_db_user:CWltCWdNrob9uIFU@cluster0.bapctqm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Colors for output
 RED='\033[0;31m'
@@ -71,7 +72,7 @@ gcloud run deploy $SERVICE_NAME_SERVER \
     --memory 512Mi \
     --cpu 1 \
     --max-instances 10 \
-    --set-env-vars="PORT=8080,CLIENT_ORIGIN=https://$SERVICE_NAME_CLIENT-$PROJECT_ID.a.run.app" \
+    --set-env-vars="PORT=8080,MONGODB_URI=$MONGODB_URI" \
     --timeout 300
 
 # Get server URL
@@ -89,6 +90,7 @@ gcloud run deploy $SERVICE_NAME_CLIENT \
     --memory 256Mi \
     --cpu 1 \
     --max-instances 5 \
+    --set-env-vars="PORT=8080,VITE_API_URL=$SERVER_URL" \
     --timeout 300
 
 # Get client URL
@@ -97,11 +99,9 @@ echo -e "${GREEN}✅ Client deployed at: ${CLIENT_URL}${NC}"
 
 echo -e "${GREEN}🎉 Deployment Complete!${NC}"
 echo -e "${YELLOW}📋 Next Steps:${NC}"
-echo -e "1. Set up MongoDB Atlas: https://cloud.mongodb.com/"
-echo -e "2. Update server environment variables with MongoDB connection string:"
-echo -e "   gcloud run services update $SERVICE_NAME_SERVER --region=$REGION --set-env-vars=\"MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/coding_challenge\""
-echo -e "3. Update client to use the server URL:"
-echo -e "   Update API calls in client code to use: ${SERVER_URL}"
+echo -e "1. ✅ MongoDB Atlas is already configured"
+echo -e "2. ✅ Client is configured to use server URL automatically"
+echo -e "3. Test your application at: ${CLIENT_URL}"
 echo -e ""
 echo -e "${GREEN}🌐 Your application URLs:${NC}"
 echo -e "Frontend: ${CLIENT_URL}"
