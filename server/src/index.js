@@ -113,7 +113,15 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 const start = async () => {
   if (!MONGODB_URI) throw new Error("MONGODB_URI missing in .env");
-  await connectDB(MONGODB_URI);
+  console.log("Connecting to MongoDB...");
+  try {
+    await connectDB(MONGODB_URI);
+    console.log("MongoDB connected successfully");
+  } catch (error) {
+    console.error("MongoDB connection failed:", error);
+    throw error;
+  }
+  console.log(`Starting server on port ${PORT}...`);
   app.listen(PORT, "0.0.0.0", () => console.log(`Server running on :${PORT}`));
 };
 

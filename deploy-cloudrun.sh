@@ -6,8 +6,8 @@
 set -e
 
 # Configuration - UPDATE THESE VALUES
-PROJECT_ID="your-project-id"  # Replace with your GCP project ID
-REGION="us-central1"          # Replace with your preferred region
+PROJECT_ID="moonlit-dynamo-472521-f3"  # Replace with your GCP project ID
+REGION="europe-west1"          # Replace with your preferred region
 SERVICE_NAME_SERVER="coding-challenge-server"
 SERVICE_NAME_CLIENT="coding-challenge-client"
 MONGODB_URI="mongodb+srv://sichardsayaz_db_user:CWltCWdNrob9uIFU@cluster0.bapctqm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -72,7 +72,7 @@ gcloud run deploy $SERVICE_NAME_SERVER \
     --memory 512Mi \
     --cpu 1 \
     --max-instances 10 \
-    --set-env-vars="PORT=8080,MONGODB_URI=$MONGODB_URI" \
+    --set-env-vars="MONGODB_URI=$MONGODB_URI" \
     --timeout 300
 
 # Get server URL
@@ -90,7 +90,7 @@ gcloud run deploy $SERVICE_NAME_CLIENT \
     --memory 256Mi \
     --cpu 1 \
     --max-instances 5 \
-    --set-env-vars="PORT=8080,VITE_API_URL=$SERVER_URL" \
+    --set-env-vars="VITE_API_URL=$SERVER_URL" \
     --timeout 300
 
 # Get client URL
