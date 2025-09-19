@@ -4,11 +4,13 @@ import Tabs from "./components/Tabs.jsx";
 import Challenge from "./components/Challenge.jsx";
 import Leaderboard from "./components/Leaderboard.jsx";
 import Timer from "./components/Timer.jsx";
+import Warmup from "./components/Warmup.jsx";
 
 export default function App() {
   const [session, setSession] = useState(null); // { username, sessionId, startTime }
   const [activeTab, setActiveTab] = useState("leaderboard");
   const [stoppedMs, setStoppedMs] = useState(null);
+  const [warmupDone, setWarmupDone] = useState(false);
 
   // Restore existing session from localStorage on load
   useEffect(() => {
@@ -65,7 +67,11 @@ export default function App() {
       <h1>Coding Challenge</h1>
 
       {!session ? (
-        <UsernameGate onStart={handleStart} />
+        <div>
+          {!warmupDone ? (
+            <Warmup onStart={(payload) => { setWarmupDone(true); handleStart(payload); }} />
+          ) : null}
+        </div>
       ) : (
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
           <div><strong>User:</strong> {session.username}</div>
