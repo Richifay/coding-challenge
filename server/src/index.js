@@ -5,6 +5,7 @@ import { connectDB } from "./db.js";
 import { Score } from "./models/Score.js";
 import { challenge } from "./challenge.js";
 import { runUserScript, runHiddenTests } from "./pythonRunner.js";
+import { runJava, runJavaHiddenTests } from "./javaRunner.js";
 import { nanoid } from "nanoid";
 
 const app = express();
@@ -29,6 +30,7 @@ app.get("/api/challenge", (req, res) => {
     title: challenge.title,
     description: challenge.description,
     starterCode: challenge.starterCode,
+    starterCodes: challenge.starterCodes || null,
     examples: challenge.examples || [],
   });
 });
@@ -72,20 +74,36 @@ app.post("/api/start", (req, res) => {
 
 // Run (with predefined input)
 app.post("/api/run", async (req, res) => {
-  const { code } = req.body || {};
+  const { code, language } = req.body || {};
   if (typeof code !== "string") return res.status(400).json({ error: "code required" });
-  const result = await runUserScript(code, challenge.predefinedInput, 3000);
+  const lang = (language || "python").toLowerCase();
+  let result;
+  if (lang === "python") {
+    result = await runUserScript(code, challenge.predefinedInput, 3000);
+  } else if (lang === "java") {
+    result = await runJava(code, challenge.predefinedInput, 10000);
+  } else {
+    return res.status(400).json({ error: "language not supported" });
+  }
   res.json(result);
 });
 
 // Submit (run hidden tests)
 app.post("/api/submit", async (req, res) => {
-  const { sessionId, code } = req.body || {};
+  const { sessionId, code, language } = req.body || {};
   if (!sessionId || typeof code !== "string") return res.status(400).json({ error: "sessionId and code required" });
   const sess = sessions.get(sessionId);
   if (!sess) return res.status(400).json({ error: "Invalid session. Start again." });
 
-  const verdict = await runHiddenTests(code, challenge.tests, 3000);
+  const lang = (language || "python").toLowerCase();
+  let verdict;
+  if (lang === "python") {
+    verdict = await runHiddenTests(code, challenge.tests, 3000);
+  } else if (lang === "java") {
+    verdict = await runJavaHiddenTests(code, challenge.tests, 10000);
+  } else {
+    return res.status(400).json({ ok: false, message: "language not supported" });
+  }
   if (!verdict.ok) {
     return res.status(200).json({ ok: false, message: verdict.message });
   }

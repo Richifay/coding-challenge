@@ -8,12 +8,33 @@ export const challenge = {
   ],
   predefinedInput: "6,2\n",
   starterCode: `def solve():
- #TODO: add you implementation here
+#TODO: add you implementation here
+   pass
+
+if __name__ == "__main__":
+   solve()
+`,
+  starterCodes: {
+    python: `def solve():
+# TODO: implement
     pass
 
 if __name__ == "__main__":
     solve()
 `,
+    java: `import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String line = br.readLine();
+        // TODO: implement using input 'line'
+        System.out.print("");
+    }
+}
+`
+  },
   tests: [
     { input: "6,2\n", expected: "    T D I T D I \n  T         D I \nT D I T D I   T \nD         I   T \nD     I   T   D \nI   T     D   I \nT         D I   \nT D I T D I     " },
     { input: "7,3\n", expected: "      T D I T D I T \n    D           I T \n  D           I   T \nD I T D I T D     I \nT           D     I \nT       D   I     T \nD     I     T     D \nI   T       D   I    \nT           D I      \nT D I T D I T       " },

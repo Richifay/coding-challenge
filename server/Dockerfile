@@ -1,8 +1,8 @@
 # Use Node.js 18 Alpine for smaller image size
 FROM node:18-alpine
 
-# Install Python 3 and build dependencies
-RUN apk add --no-cache python3 py3-pip
+# Install Python 3 and Java (OpenJDK 17) for running code
+RUN apk add --no-cache python3 py3-pip openjdk17-jre-headless openjdk17-jdk
 
 # Set working directory
 WORKDIR /app

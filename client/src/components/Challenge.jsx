@@ -5,6 +5,7 @@ import { API_BASE_URL } from "../config/api.js";
 export default function Challenge({ sessionId, onSolved }) {
   const [meta, setMeta] = useState(null);
   const [code, setCode] = useState("");
+  const [language, setLanguage] = useState("python");
   const [output, setOutput] = useState("");
   const [running, setRunning] = useState(false);
   const [error, setError] = useState(null);
@@ -12,20 +13,32 @@ export default function Challenge({ sessionId, onSolved }) {
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/challenge`).then(r => r.json()).then((c) => {
       setMeta(c);
-      const key = `code:${c.id || "default"}`;
+      // default to python
+      const defaultLang = "python";
+      setLanguage(defaultLang);
+      const key = `code:${c.id || "default"}:${defaultLang}`;
       const saved = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
-      setCode(saved != null ? saved : (c.starterCode || ""));
+      const starter = (c.starterCodes?.[defaultLang]) || c.starterCode || "";
+      setCode(saved != null ? saved : starter);
     });
   }, []);
 
   // Persist code to localStorage using challenge id as key
   useEffect(() => {
     if (!meta) return;
-    const key = `code:${meta.id || "default"}`;
-    try {
-      window.localStorage.setItem(key, code || "");
-    } catch {}
-  }, [code, meta]);
+    const key = `code:${meta.id || "default"}:${language}`;
+    try { window.localStorage.setItem(key, code || ""); } catch { }
+  }, [code, meta, language]);
+
+  function handleLanguageChange(e) {
+    const next = e.target.value;
+    setLanguage(next);
+    if (!meta) return;
+    const key = `code:${meta.id || "default"}:${next}`;
+    const saved = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
+    const starter = (meta.starterCodes?.[next]) || "";
+    setCode(saved != null ? saved : starter);
+  }
 
   async function run() {
     setRunning(true); setError(null); setOutput("");
@@ -33,7 +46,7 @@ export default function Challenge({ sessionId, onSolved }) {
       const res = await fetch(`${API_BASE_URL}/api/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, language }),
       });
       const data = await res.json();
       console.log(data);
@@ -54,7 +67,7 @@ export default function Challenge({ sessionId, onSolved }) {
       const res = await fetch(`${API_BASE_URL}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, code }),
+        body: JSON.stringify({ sessionId, code, language }),
       });
       const data = await res.json();
       if (!data.ok) {
@@ -66,7 +79,7 @@ export default function Challenge({ sessionId, onSolved }) {
             const key = `code:${meta.id || "default"}`;
             window.localStorage.removeItem(key);
           }
-        } catch {}
+        } catch { }
         setCode("");
         setOutput("");
         onSolved(data.ms);
@@ -98,8 +111,15 @@ export default function Challenge({ sessionId, onSolved }) {
         </div>
       )}
 
+      <div style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 12 }}>
+        <label>Language:</label>
+        <select value={language} onChange={handleLanguageChange} style={{ padding: 6, borderRadius: 6 }}>
+          <option value="python">Python</option>
+          <option value="java">Java</option>
+        </select>
+      </div>
       <div style={{ border: "1px solid #ddd", borderRadius: 8, overflow: "hidden", marginBottom: 8 }}>
-        <Editor height="500px" defaultLanguage="python" value={code} onChange={setCode} options={{ fontSize: 14 }} />
+        <Editor height="500px" defaultLanguage={language} value={code} onChange={setCode} options={{ fontSize: 14 }} />
       </div>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
@@ -116,7 +136,7 @@ export default function Challenge({ sessionId, onSolved }) {
       {error && (
         <div style={{ color: "crimson", marginTop: 8 }}>
           <strong>Error:</strong>
-            {error}
+          {error}
         </div>
       )}
     </div>
