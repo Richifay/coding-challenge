@@ -1,11 +1,33 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Coding Challenge</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coding Challenge</title>
+  <style>
+    header {
+      display: flex;
+      justify-content: space-between; /* pushes items left & right */
+      align-items: center;
+      padding: 1em;
+    }
+
+    header img {
+      height: 2.5em;   /* scales with text size */
+      width: auto;     /* keeps aspect ratio */
+    }
+
+    header h1 {
+      font-size: 1.5em; /* adjusts with screen */
+      margin: 0;
+    }
+  </style>
+</head>
   <body>
+  <header>
+    <h1>Coding Challenge</h1>
+    <img src="assets/bannerlogo.png" alt="Logo" />
+  </header>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
