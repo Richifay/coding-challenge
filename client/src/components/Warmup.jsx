@@ -165,7 +165,7 @@ export default function Warmup({ onStart }) {
       <h2 style={{ marginTop: 0 }}>Warm‑up</h2>
       {!started ? (
         <div>
-          <p>Ready to warm up before the real challenge?</p>
+          <p>Ready to warm up before the real challenge? 😎</p>
           <button onClick={handleStartWarmup} style={{ padding: "8px 12px", borderRadius: 8, cursor: "pointer" }}>
             Start Challenge
           </button>
@@ -201,7 +201,7 @@ export default function Warmup({ onStart }) {
         </form>
       ) : (
         <div>
-          <p><strong>Now you are warmed up. Ready to start the real challenge?</strong></p>
+          <p><strong>Now you are warmed up 🔥. Ready to start the real challenge?</strong></p>
           <div style={{ marginTop: 12 }}>
             <label style={{ display: "block", marginBottom: 6 }}>Enter your DB-Email:</label>
             <input

@@ -6,6 +6,7 @@ export default function Challenge({ sessionId, onSolved }) {
   const [meta, setMeta] = useState(null);
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("python");
+  const [stdin, setStdin] = useState("6,2");
   const [output, setOutput] = useState("");
   const [running, setRunning] = useState(false);
   const [error, setError] = useState(null);
@@ -46,7 +47,7 @@ export default function Challenge({ sessionId, onSolved }) {
       const res = await fetch(`${API_BASE_URL}/api/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, language }),
+        body: JSON.stringify({ code, language, input: stdin }),
       });
       const data = await res.json();
       console.log(data);
@@ -71,7 +72,7 @@ export default function Challenge({ sessionId, onSolved }) {
       });
       const data = await res.json();
       if (!data.ok) {
-        setError(data.message || "Wrong answer");
+        setError(data.message || "Session expired, please logout.");
       } else {
         // success: clear screen & notify parent
         try {
@@ -119,12 +120,19 @@ export default function Challenge({ sessionId, onSolved }) {
         </div>
       )}
 
-      <div style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 12 }}>
+      <div style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <label>Language:</label>
         <select value={language} onChange={handleLanguageChange} style={{ padding: 6, borderRadius: 6 }}>
           <option value="python">Python</option>
           <option value="java">Java</option>
         </select>
+        <label style={{ marginLeft: 12 }}>Input:</label>
+        <input
+          value={stdin}
+          onChange={(e) => setStdin(e.target.value)}
+          placeholder="e.g. 6,2"
+          style={{ padding: 6, borderRadius: 6, width: 160, border: "1px solid #ccc" }}
+        />
       </div>
       <div style={{ border: "1px solid #ddd", borderRadius: 8, overflow: "hidden", marginBottom: 8 }}>
         <Editor height="500px" defaultLanguage={language} value={code} onChange={setCode} options={{ fontSize: 14 }} />
@@ -143,7 +151,6 @@ export default function Challenge({ sessionId, onSolved }) {
 
       {error && (
         <div style={{ color: "crimson", marginTop: 8 }}>
-          <strong>Error:</strong>
           {error}
         </div>
       )}

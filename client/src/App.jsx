@@ -41,10 +41,10 @@ export default function App() {
 
   function handleSolved(ms) {
     clearSession();
-    window.alert(`You successfully solved the TDI coding challenge in ${ms}ms. \n
-      Your name should appear in the leaderboard. \n
-      Please come back to the coding challenge booth at 4pm to claim your prize. \n
-      Thanks for participating in the TDI coding challenge.`);
+    window.alert(`You successfully solved the TDI coding challenge. 🎉 
+      \nYour name should appear in the leaderboard. 🥳 
+      \nPlease come back to the coding challenge booth at 4pm to claim your prize. 🎁 
+      \nThanks for participating in the TDI coding challenge.`);
   }
 
   function handleLogout() {

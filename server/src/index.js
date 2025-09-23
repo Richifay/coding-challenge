@@ -95,14 +95,17 @@ app.post("/api/start", (req, res) => {
 
 // Run (with predefined input)
 app.post("/api/run", async (req, res) => {
-  const { code, language } = req.body || {};
+  const { code, language, input } = req.body || {};
   if (typeof code !== "string") return res.status(400).json({ error: "code required" });
   const lang = (language || "python").toLowerCase();
+  const inputStr = typeof input === "string" && input.length > 0
+    ? (input.endsWith("\n") ? input : input + "\n")
+    : "";
   let result;
   if (lang === "python") {
-    result = await runUserScript(code, challenge.predefinedInput, 3000);
+    result = await runUserScript(code, inputStr, 3000);
   } else if (lang === "java") {
-    result = await runJava(code, challenge.predefinedInput, 10000);
+    result = await runJava(code, inputStr, 10000);
   } else {
     return res.status(400).json({ error: "language not supported" });
   }

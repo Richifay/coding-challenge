@@ -30,7 +30,7 @@ export default function Leaderboard() {
           {rows.map((r, i) => (
             <tr key={i}>
               <td style={{ padding: 6 }}>{i + 1}</td>
-              <td style={{ padding: 6 }}>{r.username}</td>
+              <td style={{ padding: 6 }}>{r.username + (i + 1 === 1 ? " 🥇" : i + 1 === 2 ? " 🥈" : i + 1 === 3 ? " 🥉" : "")}</td>
               <td style={{ padding: 6 }}>{formatMs(r.ms)}</td>
               <td style={{ padding: 6 }}>{new Date(r.createdAt).toLocaleString()}</td>
             </tr>

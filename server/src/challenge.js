@@ -2,16 +2,15 @@ export const challenge = {
   id: "tdi-coding-challenge",
   
   title: "3D TDI DB Logo Generator ",
-  description:"Take the DB Logo to the next dimension with a litle twist",
+  description:"Take the DB Logo to the next dimension with a litle twist 🧊🌪️",
   goal: "Write a program that generates and prints the logo (shown in the example) based on two integer inputs.",
-  input: "Two non-negative integers a,b provided as a single line in the format \"a,b\". \n The predefined input which is passed to the editor is: \"6,2\".",
+  input: "Two non-negative integers a,b provided as a single line in the format \"a,b\".",
   output: "On success: print only the logo (no extra text).\nOn error: print exactly \"Error\" (capital E, the rest lowercase) and nothing else.",
   hints: "Think about these questions:\nWhat is the meaning of the numbers?\nWhat happens for \"6,0\"?\nWhat happens for \"8,4\"?\nFor which input(s) an error should occur?",
   examples: [
     { input: "6,2", image: "/image001.png" },
     { input: "7,4", image: "/image002.png" }
   ],
-  predefinedInput: "6,2\n",
   starterCodes: {
     python: `def solve():
 # TODO: implement

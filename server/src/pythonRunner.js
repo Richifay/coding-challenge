@@ -65,7 +65,7 @@ export async function runHiddenTests(code, tests, timeoutMs = 3000) {
     if (out !== expected) {
       return {
         ok: false,
-        message: `Wrong answer for input ${t.input}.`,
+        message: `I tried to execute your code with the input "${t.input}" and couldn't get the correct result 😭.`,
       };
     }
   }
