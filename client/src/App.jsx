@@ -40,31 +40,34 @@ export default function App() {
   }
 
   function handleSolved(ms) {
-    setStoppedMs(ms);
-    setActiveTab("leaderboard");
-    try {
-      window.localStorage.removeItem("user");
-      window.localStorage.removeItem("session");
-    } catch {}
-    // Clear current session so a new user can start
-    setSession(null);
+    clearSession();
+    window.alert(`You successfully solved the TDI coding challenge in ${ms}ms. \n
+      Your name should appear in the leaderboard. \n
+      Please come back to the coding challenge booth at 4pm to claim your prize. \n
+      Thanks for participating in the TDI coding challenge.`);
   }
 
   function handleLogout() {
     const code = window.prompt("Enter code to logout and clear data:");
     if (code === "cleanMe") {
+      clearSession();
+    }
+  }
+
+  function clearSession() {
       try {
         window.localStorage.clear();
       } catch {}
       setSession(null);
       setStoppedMs(null);
+      setWarmupDone(false)
       setActiveTab("leaderboard");
-    }
   }
+  
 
   return (
     <div style={{ maxWidth: 960, margin: "0 auto", padding: 16 }}>
-      <h1>Coding Challenge</h1>
+      <h1>TDI Coding Challenge</h1>
 
       {!session ? (
         <div>

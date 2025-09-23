@@ -10,9 +10,27 @@ import { nanoid } from "nanoid";
 
 const app = express();
 app.use(express.json({ limit: "200kb" }));
+
+// Flexible CORS: allow exact origins from env and Cloud Run client patterns
+const allowOrigins = new Set();
+if (process.env.CLIENT_ORIGIN) allowOrigins.add(process.env.CLIENT_ORIGIN);
+if (process.env.CLIENT_ORIGINS) {
+  for (const o of process.env.CLIENT_ORIGINS.split(",")) {
+    const trimmed = o.trim();
+    if (trimmed) allowOrigins.add(trimmed);
+  }
+}
+
+const cloudRunClientRegex = /^https:\/\/coding-challenge-client-[a-z0-9\-]+\.[a-z0-9\-]+\.run\.app$/i;
+
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true); // non-browser or same-origin
+      if (allowOrigins.has(origin)) return cb(null, true);
+      if (cloudRunClientRegex.test(origin)) return cb(null, true);
+      return cb(null, false);
+    },
     credentials: true,
   })
 );
@@ -29,7 +47,10 @@ app.get("/api/challenge", (req, res) => {
     id: challenge.id,
     title: challenge.title,
     description: challenge.description,
-    starterCode: challenge.starterCode,
+    goal: challenge.goal,
+    input: challenge.input,
+    output: challenge.output,
+    hints: challenge.hints,
     starterCodes: challenge.starterCodes || null,
     examples: challenge.examples || [],
   });
@@ -122,7 +143,7 @@ app.post("/api/submit", async (req, res) => {
 
 // Leaderboard (top 20)
 app.get("/api/leaderboard", async (req, res) => {
-  const rows = await Score.find({}).sort({ ms: 1, createdAt: 1 }).limit(20).lean();
+  const rows = await Score.find({}).sort({ ms: 1, createdAt: 1 }).lean();
   res.json(rows.map(r => ({ username: r.username, ms: r.ms, createdAt: r.createdAt })));
 });
 

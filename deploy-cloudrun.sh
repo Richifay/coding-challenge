@@ -55,12 +55,6 @@ cd server
 gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/coding-challenge-repo/$SERVICE_NAME_SERVER:latest .
 cd ..
 
-# Build and push client
-echo -e "${GREEN}🏗️  Building and pushing client image${NC}"
-cd client
-gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/coding-challenge-repo/$SERVICE_NAME_CLIENT:latest .
-cd ..
-
 # Deploy server to Cloud Run
 echo -e "${GREEN}🚀 Deploying server to Cloud Run${NC}"
 gcloud run deploy $SERVICE_NAME_SERVER \
@@ -79,7 +73,15 @@ gcloud run deploy $SERVICE_NAME_SERVER \
 SERVER_URL=$(gcloud run services describe $SERVICE_NAME_SERVER --region=$REGION --format='value(status.url)')
 echo -e "${GREEN}✅ Server deployed at: ${SERVER_URL}${NC}"
 
-# Deploy client to Cloud Run
+# Build and push client with API URL injected at build time (after server URL is known)
+echo -e "${GREEN}🏗️  Building and pushing client image (API: ${SERVER_URL})${NC}"
+cd client
+gcloud builds submit \
+  --config=cloudbuild.yaml \
+  --substitutions _API_URL=$SERVER_URL,_IMAGE=$REGION-docker.pkg.dev/$PROJECT_ID/coding-challenge-repo/$SERVICE_NAME_CLIENT:latest .
+cd ..
+
+# Deploy client to Cloud Run (no runtime env needed because API URL is baked at build)
 echo -e "${GREEN}🚀 Deploying client to Cloud Run${NC}"
 gcloud run deploy $SERVICE_NAME_CLIENT \
     --image $REGION-docker.pkg.dev/$PROJECT_ID/coding-challenge-repo/$SERVICE_NAME_CLIENT:latest \

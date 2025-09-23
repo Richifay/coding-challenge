@@ -18,7 +18,7 @@ export default function Challenge({ sessionId, onSolved }) {
       setLanguage(defaultLang);
       const key = `code:${c.id || "default"}:${defaultLang}`;
       const saved = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
-      const starter = (c.starterCodes?.[defaultLang]) || c.starterCode || "";
+      const starter = (c.starterCodes?.[defaultLang]);
       setCode(saved != null ? saved : starter);
     });
   }, []);
@@ -95,8 +95,16 @@ export default function Challenge({ sessionId, onSolved }) {
 
   return (
     <div>
-      <h2 style={{ margin: "8px 0" }}>{meta.title}</h2>
-      <p style={{ margin: "8px 0 16px", whiteSpace: "pre-line" }}>{meta.description}</p>
+      <h2 style={{ margin: "0px 0" }}>{meta.title}</h2>
+      <p style={{ margin: "8px 0 10px", whiteSpace: "pre-line", fontStyle: "italic" }}>{meta.description}</p>
+      <h3 style={{ margin: "0px 0" }}>Goal</h3>
+      <p style={{ margin: "4px 0 10px", whiteSpace: "pre-line" }}>{meta.goal}</p>
+      <h3 style={{ margin: "0px 0" }}>Input</h3>
+      <p style={{margin: "4px 0 10px", whiteSpace: "pre-line" }}>{meta.input}</p>
+      <h3 style={{ margin: "0px 0" }}>Output</h3>
+      <p style={{margin: "4px 0 10px", whiteSpace: "pre-line" }}>{meta.output}</p>
+      <h3 style={{ margin: "0px 0" }}>Hints</h3>
+      <p style={{margin: "4px 0 20px", whiteSpace: "pre-line" }}>{meta.hints}</p>
 
       {Array.isArray(meta.examples) && meta.examples.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12, marginBottom: 16 }}>

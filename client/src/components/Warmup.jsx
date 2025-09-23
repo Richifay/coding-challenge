@@ -126,14 +126,18 @@ export default function Warmup({ onStart }) {
     }
     try { window.localStorage.setItem("warmup_quiz", JSON.stringify({ answers })); } catch {}
     try { window.localStorage.setItem("warmup_done", "1"); } catch {}
+    
     setReady(true);
+    try { window.scrollTo({ top: 0}); } catch {}
   }
 
   async function handleBeginRealChallenge() {
     setError(null);
     const u = (username || "").trim();
-    if (!u) return setError("Please enter a username to continue.");
-    if (u.length < 2) return setError("Username must be at least 2 characters.");
+    if (!u) return setError("Please enter your DB-Email.");
+    // Require emails like something@db.com
+    const isDbEmail = /^[^@\s]+@db\.com$/i.test(u);
+    if (!isDbEmail) return setError("Please enter a valid DB-Email");
     setBusy(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/start`, {
@@ -199,18 +203,19 @@ export default function Warmup({ onStart }) {
         <div>
           <p><strong>Now you are warmed up. Ready to start the real challenge?</strong></p>
           <div style={{ marginTop: 12 }}>
-            <label style={{ display: "block", marginBottom: 6 }}>Enter your username:</label>
+            <label style={{ display: "block", marginBottom: 6 }}>Enter your DB-Email:</label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Your username"
+              placeholder="Your DB-Email"
+              validateEmail
               style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd" }}
             />
           </div>
           {error && <div style={{ color: "#b00020", marginTop: 8 }}>{error}</div>}
           <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
             <button disabled={busy} onClick={handleBeginRealChallenge} style={{ padding: "8px 12px", borderRadius: 8, cursor: "pointer" }}>
-              {busy ? "Starting..." : "Start real challenge"}
+              {busy ? "Starting..." : "Start Challenge"}
             </button>
           </div>
         </div>
