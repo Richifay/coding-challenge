@@ -104,8 +104,6 @@ export default function Challenge({ sessionId, onSolved }) {
       <p style={{margin: "4px 0 10px", whiteSpace: "pre-line" }}>{meta.input}</p>
       <h3 style={{ margin: "0px 0" }}>Output</h3>
       <p style={{margin: "4px 0 10px", whiteSpace: "pre-line" }}>{meta.output}</p>
-      <h3 style={{ margin: "0px 0" }}>Hints</h3>
-      <p style={{margin: "4px 0 20px", whiteSpace: "pre-line" }}>{meta.hints}</p>
 
       {Array.isArray(meta.examples) && meta.examples.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12, marginBottom: 16 }}>
@@ -138,11 +136,10 @@ export default function Challenge({ sessionId, onSolved }) {
         <Editor height="500px" defaultLanguage={language} value={code} onChange={setCode} options={{ fontSize: 14 }} />
       </div>
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+      <div style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center" }}>
         <button onClick={run} disabled={running} style={{ padding: "8px 12px", borderRadius: 8 }}>Run</button>
         <button onClick={submit} disabled={running} style={{ padding: "8px 12px", borderRadius: 8 }}>Submit</button>
       </div>
-
       <div style={{ border: "1px solid #eee", borderRadius: 8, padding: 8, minHeight: 80, background: "#fafafa" }}>
         <p style={{ whiteSpace: "pre-wrap", fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" }}>
           {output || "(no output)"}

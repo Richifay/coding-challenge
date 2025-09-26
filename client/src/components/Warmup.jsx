@@ -92,6 +92,8 @@ export default function Warmup({ onStart }) {
   const [started, setStarted] = useState(false);
   const [answers, setAnswers] = useState(Array(questions.length).fill(null));
   const [username, setUsername] = useState("");
+  const [division, setDivision] = useState("");
+  const [team, setTeam] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [ready, setReady] = useState(false);
@@ -108,6 +110,13 @@ export default function Warmup({ onStart }) {
 
   function handleStartWarmup() {
     setStarted(true);
+  }
+
+  function handleSkipWarmup() {
+    try { window.localStorage.setItem("warmup_done", "1"); } catch {}
+    setStarted(true);
+    setReady(true);
+    try { window.scrollTo({ top: 0 }); } catch {}
   }
 
   function selectAnswer(idx, choice) {
@@ -134,16 +143,16 @@ export default function Warmup({ onStart }) {
   async function handleBeginRealChallenge() {
     setError(null);
     const u = (username || "").trim();
-    if (!u) return setError("Please enter your DB-Email.");
-    // Require emails like something@db.com
-    const isDbEmail = /^[^@\s]+@db\.com$/i.test(u);
-    if (!isDbEmail) return setError("Please enter a valid DB-Email");
+    if (!u) return setError("Please enter your email.");
+    // Accept any valid email format
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(u);
+    if (!isValidEmail) return setError("Please enter a valid email");
     setBusy(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: u })
+        body: JSON.stringify({ username: u, team: team || null, division: division || null })
       });
       const data = await res.json();
       if (!res.ok || !data || !data.sessionId) {
@@ -166,9 +175,14 @@ export default function Warmup({ onStart }) {
       {!started ? (
         <div>
           <p>Ready to warm up before the real challenge? 😎</p>
-          <button onClick={handleStartWarmup} style={{ padding: "8px 12px", borderRadius: 8, cursor: "pointer" }}>
-            Start Challenge
-          </button>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={handleStartWarmup} style={{ padding: "8px 12px", borderRadius: 8, cursor: "pointer" }}>
+              Start Warm‑up (Recommended)
+            </button>
+            <button onClick={handleSkipWarmup} style={{ padding: "8px 12px", borderRadius: 8, cursor: "pointer", background: "#f5f5f5", border: "1px solid #ddd" }}>
+              Skip warm‑up, I've already did a workout this morning
+            </button>
+          </div>
         </div>
       ) : !ready ? (
         <form onSubmit={handleSubmitWarmup}>
@@ -203,14 +217,32 @@ export default function Warmup({ onStart }) {
         <div>
           <p><strong>Now you are warmed up 🔥. Ready to start the real challenge?</strong></p>
           <div style={{ marginTop: 12 }}>
-            <label style={{ display: "block", marginBottom: 6 }}>Enter your DB-Email:</label>
+            <label style={{ display: "block", marginBottom: 6 }}>Enter your Email:</label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Your DB-Email"
+              placeholder="Your Email"
               validateEmail
               style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd" }}
             />
+          </div>
+          <div style={{ display: "flex", gap: 16, marginTop: 12 }}>
+            <div style={{ flex: 1, marginRight: 16 }}>
+              <label style={{ display: "block", marginBottom: 6 }}>Division (optional):</label>
+              <input
+                value={division}
+                onChange={(e) => setDivision(e.target.value)}
+                style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd" }}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={{ display: "block", marginBottom: 6 }}>Team (optional):</label>
+              <input
+                value={team}
+                onChange={(e) => setTeam(e.target.value)}
+                style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ddd" }}
+              />
+            </div>
           </div>
           {error && <div style={{ color: "#b00020", marginTop: 8 }}>{error}</div>}
           <div style={{ display: "flex", gap: 8, marginTop: 12 }}>

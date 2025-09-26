@@ -5,12 +5,15 @@ import Challenge from "./components/Challenge.jsx";
 import Leaderboard from "./components/Leaderboard.jsx";
 import Timer from "./components/Timer.jsx";
 import Warmup from "./components/Warmup.jsx";
+import Hints from "./components/Hints.jsx";
+import { API_BASE_URL } from "./config/api.js";
 
 export default function App() {
   const [session, setSession] = useState(null); // { username, sessionId, startTime }
   const [activeTab, setActiveTab] = useState("leaderboard");
   const [stoppedMs, setStoppedMs] = useState(null);
   const [warmupDone, setWarmupDone] = useState(false);
+  const [penaltyMs, setPenaltyMs] = useState(0);
 
   // Restore existing session from localStorage on load
   useEffect(() => {
@@ -22,7 +25,13 @@ export default function App() {
           setSession(parsed);
           setActiveTab("challenge");
           setStoppedMs(null);
-        }
+          fetch(`${API_BASE_URL}/api/session?sessionId=${encodeURIComponent(parsed.sessionId)}`)
+          .then(r => r.json())
+          .then((s) => {
+            if (s && typeof s.penaltyMs === 'number') setPenaltyMs(s.penaltyMs);
+              })
+              .catch(() => {});
+          }
       }
     } catch {}
   }, []);
@@ -31,6 +40,7 @@ export default function App() {
     setSession({ username, sessionId, startTime });
     setActiveTab("challenge");
     setStoppedMs(null);
+    setPenaltyMs(0);
     try {
       window.localStorage.setItem(
         "session",
@@ -61,6 +71,7 @@ export default function App() {
       setSession(null);
       setStoppedMs(null);
       setWarmupDone(false)
+      setPenaltyMs(0);
       setActiveTab("leaderboard");
   }
   
@@ -79,7 +90,7 @@ export default function App() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
           <div><strong>User:</strong> {session.username}</div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <Timer startTime={session.startTime} stoppedMs={stoppedMs} />
+            <Timer startTime={session.startTime} stoppedMs={stoppedMs} penaltyMs={penaltyMs} />
             <button onClick={handleLogout} style={{ padding: "6px 10px", borderRadius: 8 }}>Logout</button>
           </div>
         </div>
@@ -92,6 +103,7 @@ export default function App() {
           session
             ? [
                 { id: "challenge", label: "Challenge" },
+                { id: "hints", label: "Hints" },
                 { id: "leaderboard", label: "Leaderboard" },
               ]
             : [
@@ -102,6 +114,10 @@ export default function App() {
 
       {session && activeTab === "challenge" && (
         <Challenge sessionId={session.sessionId} onSolved={handleSolved} />
+      )}
+
+      {session && activeTab === "hints" && (
+        <Hints sessionId={session.sessionId} onPenaltyChange={setPenaltyMs} />
       )}
 
       {activeTab === "leaderboard" && <Leaderboard />}

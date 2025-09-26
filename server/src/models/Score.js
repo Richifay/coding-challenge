@@ -4,6 +4,10 @@ const ScoreSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, trim: true },
     ms: { type: Number, required: true },
+    team: { type: String, trim: true },
+    division: { type: String, trim: true },
+    language: { type: String, trim: true },
+    penaltyMs: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

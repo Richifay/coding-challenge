@@ -35,7 +35,7 @@ app.use(
   })
 );
 
-// In-memory sessions: { sessionId: { username, startTime } }
+// In-memory sessions: { sessionId: { username, startTime, penaltyMs, purchasedHints:Set } }
 const sessions = new Map();
 
 // Health
@@ -50,10 +50,44 @@ app.get("/api/challenge", (req, res) => {
     goal: challenge.goal,
     input: challenge.input,
     output: challenge.output,
-    hints: challenge.hints,
     starterCodes: challenge.starterCodes || null,
     examples: challenge.examples || [],
+    hintItems: (challenge.hintItems || []).map(h => ({ id: h.id, title: h.title, summary: h.summary, costMin: h.costMin })),
   });
+});
+
+// Hints endpoints
+app.get("/api/hints", (req, res) => {
+  const list = (challenge.hintItems || []).map(h => ({ id: h.id, title: h.title, summary: h.summary, costMin: h.costMin }));
+  res.json(list);
+});
+
+app.post("/api/hints/buy", (req, res) => {
+  const { sessionId, hintId } = req.body || {};
+  if (!sessionId || !hintId) return res.status(400).json({ error: "sessionId and hintId required" });
+  const sess = sessions.get(sessionId);
+  if (!sess) return res.status(400).json({ error: "Invalid session" });
+  const item = (challenge.hintItems || []).find(h => h.id === hintId);
+  if (!item) return res.status(404).json({ error: "Hint not found" });
+  if (!sess.purchasedHints) sess.purchasedHints = new Set();
+  if (!sess.purchasedHints.has(hintId)) {
+    const addMs = (item.costMin || 0) * 60000;
+    sess.penaltyMs = (sess.penaltyMs || 0) + addMs;
+    sess.purchasedHints.add(hintId);
+  }
+  res.json({ ok: true, penaltyMs: sess.penaltyMs || 0, purchased: Array.from(sess.purchasedHints) });
+});
+
+app.get("/api/hints/:hintId", (req, res) => {
+  const { sessionId } = req.query || {};
+  const { hintId } = req.params || {};
+  if (!sessionId) return res.status(400).json({ error: "sessionId required" });
+  const sess = sessions.get(sessionId);
+  if (!sess) return res.status(400).json({ error: "Invalid session" });
+  if (!sess.purchasedHints || !sess.purchasedHints.has(hintId)) return res.status(403).json({ error: "Hint not purchased" });
+  const item = (challenge.hintItems || []).find(h => h.id === hintId);
+  if (!item) return res.status(404).json({ error: "Hint not found" });
+  res.json({ id: item.id, title: item.title, detail: item.detail, costMin: item.costMin, codePython: item.python || null, codeJava: item.java || null });
 });
 
 function escapeRegex(str) {
@@ -62,7 +96,7 @@ function escapeRegex(str) {
 
 // Start session (username -> sessionId, start timer)
 app.post("/api/start", (req, res) => {
-  const { username } = req.body || {};
+  const { username, team, division } = req.body || {};
   if (!username || !String(username).trim()) {
     return res.status(400).json({ error: "Username required" });
   }
@@ -85,12 +119,21 @@ app.post("/api/start", (req, res) => {
       }
       const sessionId = nanoid(12);
       const startTime = Date.now();
-      sessions.set(sessionId, { username: submitted, startTime });
+      sessions.set(sessionId, { username: submitted, startTime, penaltyMs: 0, purchasedHints: new Set(), team: (team || null), division: (division || null) });
       return res.json({ sessionId, startTime });
     })
     .catch((err) => {
       return res.status(500).json({ error: "Server error" });
     });
+});
+
+// Session info (penalty and purchased hints)
+app.get("/api/session", (req, res) => {
+  const { sessionId } = req.query || {};
+  if (!sessionId) return res.status(400).json({ error: "sessionId required" });
+  const sess = sessions.get(sessionId);
+  if (!sess) return res.status(400).json({ error: "Invalid session" });
+  res.json({ penaltyMs: sess.penaltyMs || 0, purchasedHints: Array.from(sess.purchasedHints || []) });
 });
 
 // Run (with predefined input)
@@ -133,10 +176,18 @@ app.post("/api/submit", async (req, res) => {
   }
 
   const endTime = Date.now();
-  const ms = endTime - sess.startTime;
+  const base = endTime - sess.startTime;
+  const ms = base + (sess.penaltyMs || 0);
 
-  // Persist to leaderboard
-  const score = await Score.create({ username: sess.username, ms });
+  // Persist to leaderboard with extra fields
+  const score = await Score.create({
+    username: sess.username,
+    ms,
+    team: sess.team || null,
+    division: sess.division || null,
+    language: lang,
+    penaltyMs: sess.penaltyMs || 0,
+  });
 
   // end session
   sessions.delete(sessionId);
@@ -147,7 +198,15 @@ app.post("/api/submit", async (req, res) => {
 // Leaderboard (top 20)
 app.get("/api/leaderboard", async (req, res) => {
   const rows = await Score.find({}).sort({ ms: 1, createdAt: 1 }).lean();
-  res.json(rows.map(r => ({ username: r.username, ms: r.ms, createdAt: r.createdAt })));
+  res.json(rows.map(r => ({
+    username: r.username,
+    team: r.team || null,
+    division: r.division || null,
+    language: r.language || null,
+    penaltyMs: r.penaltyMs || 0,
+    ms: r.ms,
+    createdAt: r.createdAt,
+  })));
 });
 
 const PORT = process.env.PORT || 4000;

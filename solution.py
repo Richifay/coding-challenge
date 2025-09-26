@@ -1,157 +1,93 @@
-
 from itertools import cycle
-
- 
-
+height = 0 #equals to width
+depth = 0
 letters_iterator = cycle("TDI")
- 
-
-def nl():
-
+def nextLetter():
     return next(letters_iterator)
 
- 
+def printTwoSpaces():
+    print(' ', end=' ')
 
-def full():
+def printNextLetterWithSpace():
+    print(nextLetter(), end=' ')
 
-    for _ in range(h):
+def printSpaces(numberOfEmptyPositions):
+    for _ in range(numberOfEmptyPositions):
+        printTwoSpaces()
 
-        print(nl() + " ", end="")
+def printLetters(numberOfLetters):
+    for _ in range(numberOfLetters):
+        printNextLetterWithSpace()
 
- 
+def printTwoLettersWithGap():
+    printNextLetterWithSpace()
+    printSpaces(height - 2)
+    printNextLetterWithSpace()
 
-def half(i):
+def printThreeLettersForDash(i):
+    printNextLetterWithSpace()
+    printSpaces(height - i - 2)
+    printNextLetterWithSpace()
+    printSpaces(i - 1)
+    printNextLetterWithSpace()
 
-    print(nl() + " ", end="")
-
-    for j in range(h - 2):
-
-        if j + 1 >= 2 and j + 1 <= (h - 3):
-
-            if j == (h - i - 2):
-
-                print(nl() + " ", end="")
-
-            else:
-
-                print("  ", end="")
-
+def printTop():
+    emptySpacesOffset = 1
+    for line in range(depth):
+        # spaces before the first letter
+        printSpaces(depth - line)
+        if line == 0:
+            # full line of letters
+            printLetters(height)
         else:
-
-            print("  ", end="")
-
-    print(nl() + " ", end="")
-
- 
-
-def empty():
-
-    print(nl() + " ", end="")
-
-    for _ in range(h - 2):
-
-        print("  ", end="")
-
-    print(nl() + " ", end="")
+            # two letters with a gap in between
+            printTwoLettersWithGap()
+            # spaces between the two letters and the last letter
+            printSpaces(line - emptySpacesOffset)
+            # final letter
+            printNextLetterWithSpace()
+        if line > height - 2:
+            emptySpacesOffset += 1
+        print('')
 
 
-try:
-    input = input()
-    hs, ss = input.split(",")
+def printBottom():
+    emptySpacesBetweenTheLastLetter = (depth if depth < height else height) - 1
+    for line in range(height):
+        if line == 0 or line == (height - 1):
+            # print full line e.g. T D I T D I"
+            printLetters(height)
+        elif 2 <= line <= (height - 3):
+            # print line for the dash / e.g. T * I * * I"
+            printThreeLettersForDash(line)
+        else:
+            # two letters with a gap in between
+            printTwoLettersWithGap()
 
-    h = int(hs)
+        if line < height - 1 and depth > 0:
+            if (height - line - depth) <= 0:
+                emptySpacesBetweenTheLastLetter -= 1
+            printSpaces(emptySpacesBetweenTheLastLetter)
+            printNextLetterWithSpace()
+        print('')
 
-    s = int(ss)
+def solve():
+    global height, depth
+    try:
+        raw = input().strip()
+        parts = raw.split(',')
+        if len(parts) != 2:
+            print('Error')
+            return
+        height = int(parts[0].strip())
+        depth = int(parts[1].strip())
+        if height < 6 or depth < 0:
+            print('Error')
+            return
+        printTop()
+        printBottom()
+    except:
+        print('Error')
 
-    
-    if (h<6):
-        print("Error") 
-    else:
-
-    # top
-
-        for i in range(s):
-
-            for _ in range(s - i):
-
-                print("  ", end="")
-
-        
-
-            if i == 0:   
-
-                full()
-
-        
-
-            else:
-
-                empty()
-
-        
-
-            for j in range(i):
-
-                if j == (i - 1):
-
-                    print(nl() + " ", end="")
-
-                else:
-
-                    print("  ", end="")
-
-        
-
-            print()
-
-        
-
-        # bottom
-
-        for i in range(h):
-
-            if i == 0 or i == (h - 1):
-
-                full()
-
-            elif i >= 2 and i <= (h - 3):
-
-                half(i)
-
-            else:
-
-                empty()
-
-        
-
-            if (h - i - s) > 0:
-
-                for j in range(s):
-
-                    if j == (s - 1):
-
-                        print(nl() + " ", end="")
-
-                    else:
-
-                        print("  ", end="")
-
-            else:
-
-                for j in range(s):
-
-                    if j == (s + (h - i - s - 2)):
-
-                        print(nl() + " ", end="")
-
-                    else:
-
-                        print("  ", end="")
-
-        
-
-            print()
-
-
-except:
-    print("Error")
+if __name__ == "__main__":
+    solve()

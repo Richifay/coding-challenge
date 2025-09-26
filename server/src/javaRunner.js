@@ -46,7 +46,7 @@ export async function runJavaHiddenTests(code, tests, timeoutMs = 10000) {
     if (exitCode !== 0) return { ok: false, message: `Runtime error on case ${i + 1}: ${stderr || stdout}` };
     const out = String(stdout || "").split('\n').map(s => s.trimEnd()).filter(s => s.trim() !== '').join('\n');
     const expected = String(t.expected).split('\n').map(s => s.trimEnd()).filter(s => s.trim() !== '').join('\n');
-    if (out !== expected) return { ok: false, message: `Wrong answer for input ${t.input}` };
+    if (out !== expected) return { ok: false, message: `I tried to execute your code with the input "${t.input}" and couldn't get the correct result 😭` };
   }
   return { ok: true };
 }

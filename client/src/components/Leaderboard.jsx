@@ -22,7 +22,11 @@ export default function Leaderboard() {
           <tr>
             <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: 6 }}>#</th>
             <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: 6 }}>Username</th>
-            <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: 6 }}>Time</th>
+            <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: 6 }}>Team</th>
+            <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: 6 }}>Division</th>
+            <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: 6 }}>Language</th>
+            <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: 6 }}>Time spent for hints</th>
+            <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: 6 }}>Total time</th>
             <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: 6 }}>Date</th>
           </tr>
         </thead>
@@ -31,12 +35,16 @@ export default function Leaderboard() {
             <tr key={i}>
               <td style={{ padding: 6 }}>{i + 1}</td>
               <td style={{ padding: 6 }}>{r.username + (i + 1 === 1 ? " 🥇" : i + 1 === 2 ? " 🥈" : i + 1 === 3 ? " 🥉" : "")}</td>
+              <td style={{ padding: 6 }}>{r.team || ""}</td>
+              <td style={{ padding: 6 }}>{r.division || ""}</td>
+              <td style={{ padding: 6 }}>{r.language || ""}</td>
+              <td style={{ padding: 6 }}>{r.penaltyMs ? formatMs(r.penaltyMs) : ""}</td>
               <td style={{ padding: 6 }}>{formatMs(r.ms)}</td>
               <td style={{ padding: 6 }}>{new Date(r.createdAt).toLocaleString()}</td>
             </tr>
           ))}
           {rows.length === 0 && (
-            <tr><td colSpan={4} style={{ padding: 6, color: "#777" }}>(No entries yet)</td></tr>
+            <tr><td colSpan={8} style={{ padding: 6, color: "#777" }}>(No entries yet)</td></tr>
           )}
         </tbody>
       </table>

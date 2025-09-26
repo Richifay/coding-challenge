@@ -4,6 +4,7 @@ export default function Tabs({ active, onChange, items }) {
   const tabs = items && items.length > 0 ? items : [
     { id: "challenge", label: "Challenge" },
     { id: "leaderboard", label: "Leaderboard" },
+    { id: "hints", label: "Hints" },
   ];
   return (
     <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
@@ -15,8 +16,14 @@ export default function Tabs({ active, onChange, items }) {
             padding: "8px 12px",
             borderRadius: 8,
             border: "1px solid #ccc",
-            background: active === t.id ? "#111" : "#fafafa",
-            color: active === t.id ? "white" : "#111",
+            background:
+              t.id === "hints"
+                ? (active === t.id ? "#ff8c00" : "#ffa726")
+                : (active === t.id ? "#111" : "#fafafa"),
+            color:
+              t.id === "hints"
+                ? (active === t.id ? "#fff" : "#111")
+                : (active === t.id ? "white" : "#111"),
             cursor: "pointer",
           }}
         >
