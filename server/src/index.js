@@ -148,7 +148,7 @@ app.post("/api/run", async (req, res) => {
   if (lang === "python") {
     result = await runUserScript(code, inputStr, 3000);
   } else if (lang === "java") {
-    result = await runJava(code, inputStr, 10000);
+    result = await runJava(code, inputStr, 20000);
   } else {
     return res.status(400).json({ error: "language not supported" });
   }
@@ -167,7 +167,7 @@ app.post("/api/submit", async (req, res) => {
   if (lang === "python") {
     verdict = await runHiddenTests(code, challenge.tests, 3000);
   } else if (lang === "java") {
-    verdict = await runJavaHiddenTests(code, challenge.tests, 10000);
+    verdict = await runJavaHiddenTests(code, challenge.tests, 40000);
   } else {
     return res.status(400).json({ ok: false, message: "language not supported" });
   }

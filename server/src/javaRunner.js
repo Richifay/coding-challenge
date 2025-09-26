@@ -10,7 +10,7 @@ function exec(cmd, args, opts = {}) {
     let stdout = "";
     let stderr = "";
     let killed = false;
-    const timeoutMs = opts.timeoutMs || 30000;
+    const timeoutMs = opts.timeoutMs || 60000;
     const timer = setTimeout(() => { killed = true; proc.kill("SIGKILL"); }, timeoutMs);
     proc.stdout.on("data", (d) => (stdout += d.toString()));
     proc.stderr.on("data", (d) => (stderr += d.toString()));
@@ -22,7 +22,7 @@ function exec(cmd, args, opts = {}) {
   });
 }
 
-export async function runJava(code, input, timeoutMs = 10000) {
+export async function runJava(code, input, timeoutMs = 20000) {
   const workDir = join(tmpdir(), `java_${nanoid(8)}`);
   await fs.mkdir(workDir, { recursive: true });
   const mainPath = join(workDir, "Main.java");
@@ -38,7 +38,7 @@ export async function runJava(code, input, timeoutMs = 10000) {
   }
 }
 
-export async function runJavaHiddenTests(code, tests, timeoutMs = 10000) {
+export async function runJavaHiddenTests(code, tests, timeoutMs = 40000) {
   for (let i = 0; i < tests.length; i++) {
     const t = tests[i];
     const { code: exitCode, stdout, stderr, timedOut } = await runJava(code, t.input, timeoutMs);

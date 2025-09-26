@@ -12,14 +12,14 @@ export const challenge = {
       title: "Free Hint",
       summary: "Some tips to get started",
       costMin: 0,
-      detail: "Think about these questions:\nWhat is the meaning of the numbers?\nWhat happens for \"6,0\"?\nWhat happens for \"8,4\"?\nFor which input(s) an error should occur?\nExtra tipp: An error should also occour if the Logo does not look like a DB Logo",
+      detail: "Think about these questions:\nWhat is the meaning of the numbers?\nWhat happens for \"6,0\"?\nWhat happens for \"8,4\"?\nFor which input(s) an error should occur?\nExtra hint: An error should also occour if the Logo does not look like a DB Logo.",
     },
     {
       id: "meaning-of-the-numbers",
       title: "Meaning of the Inputs",
       summary: "What does the numbers mean?",
       costMin: 1,
-      detail: "The first number describes the width and height of the 2D logo. (The X and Y axis)\nThe second number describes the depth of the Logo. (The Z axis)\nExtra Tipp; The Total number of lines beeing printed is equal to the sum of the two numbers",
+      detail: "The first number describes the width and height of the 2D logo. (The X and Y axis)\nThe second number describes the depth of the Logo starting from 0. (The Z axis)\nIf the depth is 0, the logo will be printed only 2D.\nExtra hint: The total number of lines beeing printed is equal to the sum of the two numbers.",
     },
     {
       id: "how-to-read-inputs",
@@ -42,14 +42,14 @@ b = int(parts[1].strip())`,
       title: "What are the error scenarios?",
       summary: "For which input(s) an error should occur?",
       costMin: 1,
-      detail: "These are these error scenarios:\n1. There are more or less than two input numbers.\n2. The input does not provide integer(s)\n3. One of the number is negative \n4. The first number is smaller than 6 (Because it's not looking like a DB Logo in that case)",
+      detail: "These are these error scenarios:\n1. There are more or less than two input numbers.\n2. The input does not provide integer(s).\n3. One of the number is negative.\n4. The first number is smaller than 6 (Because it's not looking like a DB Logo in that case).",
     },
     {
       id: "error-handling",
       title: "Error handling",
       summary: "Implementation details for error handling",
       costMin: 5,
-      detail: "You can use try and catch block for handling the most errors.\nAlso check if the first number is larger than 5 and the second number is not negative",
+      detail: "You can use a try and catch block for handling the most errors.\nAlso check if the first number is larger than 5 and the second number is not negative.",
       java: `try {
   // read the input
   // check if two elements are provided in the input array
@@ -76,13 +76,12 @@ except:
     },
     {
       id: "code-structure",
-      title: "How to structure the code to print the logo",
-      summary: "How to structure the code to print the logo",
+      title: "How to structure your code",
+      summary: "A rocket start for your code",
       costMin: 1,
       detail: "Here is how you can structure the code to print the logo.\nYou can split up the logo into two parts:\n1. The top part (number of lines equals to the depth)\n2. The bottom part (number of lines equals to the height)",
       java: `import java.io.*;
 public class Main {
-  //static helper functions
   private static void printTop() {}
 
   private static void printBottom() {}
@@ -115,7 +114,7 @@ if __name__ == "__main__":
       id: "tdi-iterator",
       title: "TDI Iterator",
       summary: "How to Iterate between T, D and I",
-      costMin: 4,
+      costMin: 3,
       detail: "You can use a simple iterator to iterate between T, D and I.",
       java: `private static final char[] TOKENS = {'T', 'D', 'I'};
 private static int tokenIdx = 0;
@@ -133,27 +132,25 @@ def nextLetter():
       id: "first-part-of-the-logo",
       title: "Printing the first part of the logo",
       summary: "Breaking down how to print the first part of the logo",
-      costMin: 8,
-      detail: "To print the first part of the logo (Top part),\nwe need to create a loop that prints letters and spaces based on the number of line.\n",
+      costMin: 6,
+      detail: "To print the first part of the logo (Top part),\nwe need to create a loop that prints the characters based on the number of lines.\n",
       java: `private static void printTop() {
   int emptySpacesOffset = 1;
   for (int line = 0; line < secondInput; line++) {
     StringBuilder out = new StringBuilder();
-    // print spaces for the empty positions before the first letter
+    // spaces before the first letter
     printSpacesOf(out, secondInput - line);
       
     if (line == 0) {
-      // on the first line print full line e.g. T D I T D I"
+      // on the first line print full line e.g. T D I T D I
       printLetterOf(out, firstInput);
     } else {
-      // print two letters with empty positions in between e.g. T * * * * I"
+      // print two letters with empty positions in between e.g. T * * * * I
       printTwoLettersWithVoid(out);
-      // print spaces for the empty positions in between the two letters
+      // spaces between the two letters and the last letter
       printSpacesOf(out, line - emptySpacesOffset);
-      //print the next letter
       printNextLetter(out);
     }
-    //if the line is greater than the firstInput - 2, increment the empty spaces offset
     if (line > firstInput - 2){
       emptySpacesOffset++;
     }
@@ -166,14 +163,13 @@ def nextLetter():
     # spaces before the first letter
     printSpacesOf(secondInput - line)
     if line == 0:
-      # full line of letters
+      # on the first line print full line e.g. T D I T D I
       printLettersOf(firstInput)
     else:
-      # two letters with a gap in between
+      # print two letters with empty positions in between e.g. T * * * * I
       printTwoLettersWithVoid()
       # spaces between the two letters and the last letter
       printSpacesOf(line - emptySpacesOffset)
-      # final letter
       printNextLetter()
     if line > firstInput - 2:
       emptySpacesOffset += 1
@@ -184,34 +180,32 @@ def nextLetter():
       title: "Printing the second part of the logo",
       summary: "Breaking down how to print the second part of the logo",
       costMin: 8,
-      detail: "To print the second part of the logo (Bottom part),\nwe need to create a loop that prints letters and spaces based on the number of line.\n",
+      detail: "To print the second part of the logo (Bottom part),\nwe need to create a loop that prints the characters based on the number of lines.\n",
       java: `private static void printBottom() {
-        int emptySpacesBetweenTheLastLetter = (b < a ? b : a) - 1;
-        for (int line = 0; line < a; line++) {
-            StringBuilder out = new StringBuilder();
-
-            if (line == 0 || line == (a - 1)) {
-                //print full line e.g. T D I T D I"
-                printLetters(out, a);
-            } else if (line >= 2 && line <= (a - 3)) {
-                //print line for the dash / e.g. T * I * * I"
-                printThreeLettersForDash(out, line);
-            } else {
-                //print two letter with empty positions (a - 2) in between e.g. T * * * * I"
-                printTwoLettersWithGap(out);
-            }
-            
-            //print the last letter with empty positions
-            if(line < a - 1  && b > 0) { 
-                if ((a - line - b) <= 0) {
-                    emptySpacesBetweenTheLastLetter--;
-                }
-                printSpaces(out, emptySpacesBetweenTheLastLetter);
-                printNextLetterWithSpace(out);
-            }
-            System.out.println(out);
-        }
-    }`,
+  int emptySpacesBetweenTheLastLetter = (b < a ? b : a) - 1;
+  for (int line = 0; line < a; line++) {
+    StringBuilder out = new StringBuilder();
+    if (line == 0 || line == (a - 1)) {
+      // print full line e.g. T D I T D I"
+      printLettersOf(out, a);
+    } else if (line >= 2 && line <= (a - 3)) {
+      // print line for the dash / e.g. T * D * * I
+      printThreeLettersForDash(out, line);
+    } else {
+      //print two letter with empty positions in between e.g. T * * * * D
+      printTwoLettersWithVoid(out);
+    }
+      //print the last letter with empty positions
+      if(line < a - 1  && b > 0) { 
+        if ((a - line - b) <= 0) {
+          emptySpacesBetweenTheLastLetter--;
+        }  
+        printSpacesOf(out, emptySpacesBetweenTheLastLetter);
+        printNextLetterWithSpace(out);
+      }
+    System.out.println(out);
+  }
+}`,
       python: `def printBottom():
   emptySpacesBetweenTheLastLetter = (b if b < a else a) - 1
   for line in range(a):
@@ -219,12 +213,11 @@ def nextLetter():
       # print full line e.g. T D I T D I"
       printLettersOf(a)
     elif 2 <= line <= (a - 3):
-      # print line for the dash / e.g. T * I * * I"
+      # print line for the dash / e.g. T * D * * I"
       printThreeLettersForDash(line)
     else:
-      # two letters with a gap in between
+      # print two letter with empty positions in between e.g. T * * * * D
       printTwoLettersWithVoid()
-
     if line < a - 1 and b > 0:
       if (a - line - b) <= 0:
         emptySpacesBetweenTheLastLetter -= 1
@@ -233,10 +226,10 @@ def nextLetter():
     print('')`,
     },
     {
-      id: "usefull-functions",
-      title: "Some usefull functions to print the logo",
-      summary: "Breaking down how to print the third part of the logo",
-      costMin: 5,
+      id: "useful-functions",
+      title: "Some useful functions to print the logo",
+      summary: "Some static functions to get to the solution",
+      costMin: 3,
       detail: "I'll provide you some usefull functions to print the logo.",
       java: `private static void printTwoSpaces(StringBuilder out) {
   out.append(' ').append(' ');
@@ -300,14 +293,14 @@ def printThreeLettersForDash(i):
     {
       id: "the-secret",
       title: "Secret 🤫",
-      summary: "A Secret that you shouldn't tell anyone",
+      summary: "A secret that you shouldn't tell anyone",
       costMin: 2,
-      detail: "You can use AI, I dont care, I build the challenge AI-Proof",
+      detail: "You can use AI, I dont care, I build the challenge AI-Proof.",
     },
   ],
   examples: [
     { input: "6,2", image: "/image001.png" },
-    { input: "7,4", image: "/image002.png" }
+    { input: "7,4", image: "/image002a.png" }
   ],
   starterCodes: {
     python: `def solve():
